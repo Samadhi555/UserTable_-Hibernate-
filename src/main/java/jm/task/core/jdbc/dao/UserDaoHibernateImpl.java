@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 
+import javax.persistence.Table;
 import java.util.List;
 
 
@@ -17,13 +18,24 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void createUsersTable() {
-
+        try (Session session = Util.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            String createTableSQL = "CREATE TABLE IF NOT EXISTS users (id BIGINT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(40), lastName VARCHAR(40), age TINYINT)";
+            session.createSQLQuery(createTableSQL).executeUpdate();
+            transaction.commit();
+            session.close();
+        }
     }
 
     @Override
     public void dropUsersTable() {
-
-
+        try (Session session = Util.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            String dropTableSQL = "DROP TABLE IF EXISTS users";
+            session.createSQLQuery(dropTableSQL).executeUpdate();
+            transaction.commit();
+            session.close();
+        }
     }
 
     @Override
